@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Doctors List</title>
+    <title>Doctors List</title>
 </head>
 
 <body>
 
 <h1>Doctors List</h1>
 
-<a href="{{ route('doctors.create') }}">Add New Doctor</a>
+@auth
+    @if(auth()->user()->role === 'admin')
+        <a href="{{ route('doctors.create') }}">Add New Doctor</a>
+    @endif
+@endauth
 
 <br><br>
 
@@ -37,16 +41,24 @@
 
 <td>
 
-<a href="{{ route('doctors.edit',$doctor->id) }}">Edit</a>
+@if(auth()->user()->role === 'admin')
 
-<form action="{{ route('doctors.destroy',$doctor->id) }}" method="POST" style="display:inline;">
+    <a href="{{ route('doctors.edit', $doctor->id) }}">Edit</a>
 
-@csrf
-@method('DELETE')
+    <form action="{{ route('doctors.destroy', $doctor->id) }}" method="POST" style="display:inline;">
 
-<button type="submit">Delete</button>
+        @csrf
+        @method('DELETE')
 
-</form>
+        <button type="submit">Delete</button>
+
+    </form>
+
+@else
+
+    View Only
+
+@endif
 
 </td>
 

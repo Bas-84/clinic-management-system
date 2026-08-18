@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Appointments List</title>
+    <title>Appointments List</title>
 </head>
 
 <body>
 
 <h1>Appointments List</h1>
 
-<a href="{{ route('appointments.create') }}">Add New Appointment</a>
+{{-- Add Appointment --}}
+@if(in_array(auth()->user()->role, ['admin', 'receptionist']))
+    <a href="{{ route('appointments.create') }}">Add New Appointment</a>
+@endif
 
 <br><br>
 
@@ -39,16 +42,31 @@
 
 <td>
 
-<a href="{{ route('appointments.edit',$appointment->id) }}">Edit</a>
+    {{-- Edit: Admin + Receptionist --}}
+    @if(in_array(auth()->user()->role, ['admin', 'receptionist']))
+        <a href="{{ route('appointments.edit', $appointment->id) }}">Edit</a>
+    @endif
 
-<form action="{{ route('appointments.destroy',$appointment->id) }}" method="POST" style="display:inline;">
+    {{-- Delete: Admin only --}}
+    @if(auth()->user()->role === 'admin')
 
-@csrf
-@method('DELETE')
+        <form action="{{ route('appointments.destroy', $appointment->id) }}"
+              method="POST"
+              style="display:inline;">
 
-<button type="submit">Delete</button>
+            @csrf
+            @method('DELETE')
 
-</form>
+            <button type="submit">Delete</button>
+
+        </form>
+
+    @endif
+
+    {{-- Doctor: View Only --}}
+    @if(auth()->user()->role === 'doctor')
+        View Only
+    @endif
 
 </td>
 

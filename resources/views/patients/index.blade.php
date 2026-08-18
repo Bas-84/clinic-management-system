@@ -7,7 +7,11 @@
 
 <h1>Patients List</h1>
 
-<a href="{{ route('patients.create') }}">Add New Patient</a>
+@auth
+    @if(in_array(auth()->user()->role, ['admin', 'receptionist']))
+        <a href="{{ route('patients.create') }}">Add New Patient</a>
+    @endif
+@endauth
 
 <br><br>
 
@@ -30,16 +34,24 @@
 
         <td>
 
-            <a href="{{ route('patients.edit',$patient->id) }}">Edit</a>
+            @if(in_array(auth()->user()->role, ['admin', 'receptionist']))
 
-            <form action="{{ route('patients.destroy',$patient->id) }}" method="POST" style="display:inline;">
+                <a href="{{ route('patients.edit', $patient->id) }}">Edit</a>
 
-                @csrf
-                @method('DELETE')
+                <form action="{{ route('patients.destroy', $patient->id) }}" method="POST" style="display:inline;">
 
-                <button type="submit">Delete</button>
+                    @csrf
+                    @method('DELETE')
 
-            </form>
+                    <button type="submit">Delete</button>
+
+                </form>
+
+            @else
+
+                View Only
+
+            @endif
 
         </td>
 
